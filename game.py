@@ -2,7 +2,6 @@ import pygame, sys
 
 
 class Brain:
-
     def getAction(self, myPosition: tuple, myVelocity: tuple,
                   enemyPosition: tuple, enemyVelocity: tuple,
                   closestBulletPosition: tuple) -> tuple:
@@ -13,15 +12,15 @@ class Brain:
 
 
 class Bullet:
-
     def __init__(self, position: tuple, velocity: tuple):
         self._position: tuple = position
         self._velocity: tuple = velocity
         self._size: tuple = (5, 5)
+        self._speed: int = 50
 
     def update(self):
-        self._position = (self._position[0] + self._velocity[0],
-                          self._position[1] + self._velocity[1])
+        self._position = (self._position[0] + self._speed * self._velocity[0],
+                          self._position[1] + self._speed * self._velocity[1])
 
     def draw(self, surface):
         pygame.draw.rect(
@@ -31,7 +30,6 @@ class Bullet:
 
 
 class Player:
-
     def __init__(self, brain: Brain, position: tuple = (0, 0)):
         self._position: tuple = position
         self._velocity: tuple = (10, 10)
@@ -40,6 +38,7 @@ class Player:
         self._brain: Brain = brain
         self._bullets: list = []
         self._action: tuple = ((0, 0), (0, 0))
+        self._speed: int = 10
 
     @property
     def position(self) -> tuple:
@@ -74,12 +73,13 @@ class Player:
 
     def updateAction(self, enemyPosition: tuple, enemyVelocity: tuple, closestBulletPosition: tuple):
         self._action = self._brain.getAction(self._position, self._velocity, enemyPosition,enemyVelocity, closestBulletPosition)
+        assert(self._action[0][0] in [-1, 0, 1] and self._action[0][1] in [-1, 0, 1] and self._action[1][0] in [-1, 0, 1] and self._action[1][1] in [-1, 0, 1])
         self._velocity = self._action[0]
+        self._shoot(self._action[1])
 
     def update(self):
-        self._position = (self._position[0] + self._velocity[0],
-                          self._position[1] + self._velocity[1])
-        self._shoot(self._action[1])
+        self._position = (self._position[0] + self._speed * self._velocity[0],
+                          self._position[1] + self._speed * self._velocity[1])
         for bullet in self._bullets:
             bullet.update()
 

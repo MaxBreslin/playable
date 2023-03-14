@@ -7,6 +7,9 @@ pygame.init()
 DISPLAYSURF = pygame.display.set_mode((400, 300))
 DISPLAYSURF.fill((255, 255, 255))
 
+clock = pygame.time.Clock()
+frameRate = 1
+
 brain: Brain = myBrain()
 player1: Player = Player(brain)
 player2: Player = Player(brain, (100, 100))
@@ -24,3 +27,5 @@ while True:
             pygame.quit()
             sys.exit()
     pygame.display.flip()
+
+    clock.tick(frameRate)

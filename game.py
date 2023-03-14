@@ -20,7 +20,7 @@ class Bullet:
 class Player:
     def __init__(self, brain: Brain, position: tuple = (0, 0)):
         self._position: tuple = position
-        self._velocity: tuple = (0, 0)
+        self._velocity: tuple = (10, 10)
         self._name: str = "Player"
         self._size: tuple = (30, 30)
         self._brain: Brain = brain

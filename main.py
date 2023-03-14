@@ -22,8 +22,8 @@ running = True
 
 while running:
 
-    player1.update(AREA)
-    player2.update(AREA)
+    player1.update()
+    player2.update()
     if frameCount >= 10:
         player1.updateAction(player2.position, player2.velocity, (0, 0))
         player2.updateAction(player1.position, player1.velocity, (0, 0))

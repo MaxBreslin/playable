@@ -4,28 +4,41 @@ from game import Player, Brain, Game
 from myBrain import myBrain
 
 pygame.init()
+
 DISPLAYSURF = pygame.display.set_mode((400, 300))
-DISPLAYSURF.fill((255, 255, 255))
+background_color = (255, 255, 255)
+DISPLAYSURF.fill(background_color)
 
 clock = pygame.time.Clock()
-frameRate = 1
+frameRate = 30
+frameCount = 0
 
 brain: Brain = myBrain()
 player1: Player = Player(brain)
 player2: Player = Player(brain, (100, 100))
 
+running = True
 
-while True:
+while running:
 
-    player1.update(player2.position, player2.velocity, (0, 0))
-    player2.update(player1.position, player1.velocity, (0, 0))
+    player1.update()
+    player2.update()
+    if frameCount >= 10:
+        player1.updateAction(player2.position, player2.velocity, (0, 0))
+        player2.updateAction(player1.position, player1.velocity, (0, 0))
+        frameCount = 0
+
     player1.draw(DISPLAYSURF)
     player2.draw(DISPLAYSURF)
 
     for event in pygame.event.get():
         if event.type == QUIT:
-            pygame.quit()
-            sys.exit()
+            running = False
     pygame.display.flip()
+    DISPLAYSURF.fill(background_color)
 
+    frameCount += 1
     clock.tick(frameRate)
+
+pygame.quit()
+sys.exit()

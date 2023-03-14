@@ -11,7 +11,7 @@ class Bullet:
     def __init__(self, position: tuple, velocity: tuple):
         self._position: tuple = position
         self._velocity: tuple = velocity
-        self._size: tuple = (10, 10)
+        self._size: tuple = (5, 5)
     def update(self):
         self._position = (self._position[0] + self._velocity[0], self._position[1] + self._velocity[1])
     def draw(self, surface):

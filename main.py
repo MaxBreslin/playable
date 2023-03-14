@@ -23,4 +23,4 @@ while True:
         if event.type == QUIT:
             pygame.quit()
             sys.exit()
-    pygame.display.update()
+    pygame.display.flip()

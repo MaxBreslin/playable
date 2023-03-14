@@ -5,7 +5,8 @@ from myBrain import myBrain
 
 pygame.init()
 
-DISPLAYSURF = pygame.display.set_mode((400, 300))
+AREA = (500, 500)
+DISPLAYSURF = pygame.display.set_mode(AREA)
 background_color = (255, 255, 255)
 DISPLAYSURF.fill(background_color)
 
@@ -21,8 +22,8 @@ running = True
 
 while running:
 
-    player1.update()
-    player2.update()
+    player1.update(AREA)
+    player2.update(AREA)
     if frameCount >= 10:
         player1.updateAction(player2.position, player2.velocity, (0, 0))
         player2.updateAction(player1.position, player1.velocity, (0, 0))

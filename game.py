@@ -18,7 +18,7 @@ class Bullet:
         self._size: tuple = (5, 5)
         self._speed: int = 50
 
-    def update(self):
+    def update(self, area: tuple):
         self._position = (self._position[0] + self._speed * self._velocity[0],
                           self._position[1] + self._speed * self._velocity[1])
 
@@ -77,11 +77,13 @@ class Player:
         self._velocity = self._action[0]
         self._shoot(self._action[1])
 
-    def update(self):
-        self._position = (self._position[0] + self._speed * self._velocity[0],
-                          self._position[1] + self._speed * self._velocity[1])
+    def update(self, area: tuple):
+        clamp = lambda n, minn, maxn: max(min(maxn, n), minn)
+        self._position = (clamp(self._position[0] + self._speed * self._velocity[0], 0, area[0] - self._size[0]), clamp(self._position[1] + self._speed * self._velocity[1], 0, area[1] - self._size[1]))
         for bullet in self._bullets:
             bullet.update()
+            if bullet.position[0] < 0 or bullet.position[0] > area[0] or bullet.position[1] < 0 or bullet.position[1] > area[1]:
+                self._bullets.remove(bullet)
 
     def draw(self, surface):
         pygame.draw.rect(

@@ -21,15 +21,15 @@ player2: Player = Player(brain2, (200, 200), AREA)
 
 running = True
 
-inRange = lambda x, y, r: (x[0] <= y[0] <= x[0]+r[0]) and (x[1] <= y[1] <= x[1]+r[1])
+inRange = lambda x, y, r, k: (x[0]-k[0] <= y[0] <= x[0]+r[0]) and (x[1]-k[1] <= y[1] <= x[1]+r[1])
 
 while running:
     for bullet in player1.bullets:
-        if inRange(player2.position, bullet.position, player2.size):
+        if inRange(player2.position, bullet.position, player2.size, bullet.size):
             print("Player 2 shot!")
             running = False
     for bullet in player2.bullets:
-        if inRange(player1.position, bullet.position, player1.size):
+        if inRange(player1.position, bullet.position, player1.size, bullet.size):
             print("Player 1 shot!")
             running = False
       

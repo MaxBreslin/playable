@@ -87,7 +87,8 @@ class Player:
         self._action = self._brain.getAction(self._position, self._velocity, enemyPosition,enemyVelocity, closestBulletPosition)
         assert(self._action[0][0] in [-1, 0, 1] and self._action[0][1] in [-1, 0, 1] and self._action[1][0] in [-1, 0, 1] and self._action[1][1] in [-1, 0, 1])
         self._velocity = self._action[0]
-        self._shoot(self._action[1])
+        if self._action[1] != (0, 0):
+            self._shoot(self._action[1])
 
     def update(self):
         clamp = lambda n, minn, maxn: max(min(maxn, n), minn)

@@ -1,6 +1,6 @@
-import pygame, sys
+import pygame
 from pygame.locals import QUIT
-from game import Player, Brain, Game
+from game import Player, Brain
 from myBrain import myBrain
 
 pygame.init()
@@ -14,9 +14,10 @@ clock = pygame.time.Clock()
 frameRate = 30
 frameCount = 0
 
-brain: Brain = myBrain()
-player1: Player = Player(brain, (0, 0), AREA)
-player2: Player = Player(brain, (100, 100), AREA)
+brain1: Brain = myBrain()
+player1: Player = Player(brain1, (0, 0), AREA)
+brain2: Brain = Brain()
+player2: Player = Player(brain2, (200, 200), AREA)
 
 running = True
 
@@ -26,9 +27,11 @@ while running:
     for bullet in player1.bullets:
         if inRange(player2.position, bullet.position, player2.size):
             print("Player 2 shot!")
+            running = False
     for bullet in player2.bullets:
         if inRange(player1.position, bullet.position, player1.size):
             print("Player 1 shot!")
+            running = False
       
   
     player1.update()
@@ -51,4 +54,3 @@ while running:
     clock.tick(frameRate)
 
 pygame.quit()
-sys.exit()

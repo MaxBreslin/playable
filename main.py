@@ -5,7 +5,7 @@ from myBrain import myBrain
 
 pygame.init()
 
-AREA = (500, 500)
+AREA = (400, 400)
 DISPLAYSURF = pygame.display.set_mode(AREA)
 background_color = (255, 255, 255)
 DISPLAYSURF.fill(background_color)
@@ -15,13 +15,22 @@ frameRate = 30
 frameCount = 0
 
 brain: Brain = myBrain()
-player1: Player = Player(brain)
-player2: Player = Player(brain, (100, 100))
+player1: Player = Player(brain, (0, 0), AREA)
+player2: Player = Player(brain, (100, 100), AREA)
 
 running = True
 
-while running:
+inRange = lambda x, y, r: (x[0] <= y[0] <= x[0]+r[0]) and (x[1] <= y[1] <= x[1]+r[1])
 
+while running:
+    for bullet in player1.bullets:
+        if inRange(player2.position, bullet.position, player2.size):
+            print("Player 2 shot!")
+    for bullet in player2.bullets:
+        if inRange(player1.position, bullet.position, player1.size):
+            print("Player 1 shot!")
+      
+  
     player1.update()
     player2.update()
     if frameCount >= 10:

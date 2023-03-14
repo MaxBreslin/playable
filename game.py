@@ -16,7 +16,7 @@ class Bullet:
         self._position: tuple = position
         self._velocity: tuple = velocity
         self._size: tuple = (5, 5)
-        self._speed: int = 50
+        self._speed: int = 2
 
     @property
     def position(self) -> tuple:
@@ -49,7 +49,7 @@ class Player:
         self._brain: Brain = brain
         self._bullets: list = []
         self._action: tuple = ((0, 0), (0, 0))
-        self._speed: int = 10
+        self._speed: int = 1
         self._area: tuple = area
 
     @property
@@ -81,7 +81,7 @@ class Player:
         self._size = size
 
     def _shoot(self, direction: tuple):
-        self._bullets.append(Bullet(self._position, direction))
+        self._bullets.append(Bullet((self._position[0]+self._size[0]//2, self._position[1]+self._size[1]//2), direction))
 
     def updateAction(self, enemyPosition: tuple, enemyVelocity: tuple, closestBulletPosition: tuple):
         self._action = self._brain.getAction(self._position, self._velocity, enemyPosition,enemyVelocity, closestBulletPosition)

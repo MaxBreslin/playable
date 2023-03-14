@@ -18,6 +18,17 @@ class Bullet:
         self._size: tuple = (5, 5)
         self._speed: int = 50
 
+    @property
+    def position(self) -> tuple:
+        return self._position
+    @property
+    def velocity(self) -> tuple:
+        return self._velocity
+    @property
+    def size(self) -> tuple:
+        return self._size
+    
+
     def update(self):
         self._position = (self._position[0] + self._speed * self._velocity[0],
                           self._position[1] + self._speed * self._velocity[1])

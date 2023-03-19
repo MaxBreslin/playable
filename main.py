@@ -1,22 +1,20 @@
 import pygame
 from pygame.locals import QUIT
 from game import Player, Brain, Game
-from benchmarkBrains import randomBrain
+from benchmarkBrains import *
 
 pygame.init()
 
 AREA = (500, 500)
 DISPLAYSURF = pygame.display.set_mode(AREA)
-background_color = (255, 255, 255)
-DISPLAYSURF.fill(background_color)
 
 clock = pygame.time.Clock()
 FRAMERATE = 60
 
-brain1: Brain = randomBrain()
-player1: Player = Player(brain1, "Player 1", (255, 0, 0), (0, 0), AREA)
-brain2: Brain = randomBrain()
-player2: Player = Player(brain2, "Player 2", (0, 0, 255), (200, 200), AREA)
+brain1: Brain = dumbBrain()
+player1: Player = Player(brain1, " 1", (255, 0, 0), (0, 0), AREA)
+brain2: Brain = dumbBrain()
+player2: Player = Player(brain2, " 2", (0, 0, 255), (200, 200), AREA)
 
 game = Game(DISPLAYSURF, player1, player2)
 

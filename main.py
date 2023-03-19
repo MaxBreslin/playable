@@ -7,16 +7,17 @@ pygame.init()
 
 AREA = (500, 500)
 DISPLAYSURF = pygame.display.set_mode(AREA)
+pygame.display.set_caption("")
 
 clock = pygame.time.Clock()
 FRAMERATE = 60
 
-brain1: Brain = randomBrain()
-player1: Player = Player(brain1, " 1", (180, 60, 60), (0, 0), AREA)
-brain2: Brain = randomBrain()
-player2: Player = Player(brain2, " 2", (60, 60, 180), (200, 200), AREA)
+redBrain: Brain = randomBrain()
+redPlayer: Player = Player(redBrain, (180, 60, 60), (0, 0), AREA)
+blueBrain: Brain = randomBrain()
+bluePlayer: Player = Player(blueBrain, (60, 60, 180), (200, 200), AREA)
 
-game = Game(DISPLAYSURF, player1, player2)
+game = Game(DISPLAYSURF, bluePlayer, redPlayer)
 
 running = True
 

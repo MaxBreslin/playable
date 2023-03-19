@@ -39,20 +39,18 @@ class Bullet:
         pygame.draw.rect(surface, self._color, self._rect, border_radius=self.BORDERRADIUS)
 
 class Player:
-    def __init__(self, brain: Brain, name: str, bulletColor: tuple, position: tuple = (0, 0), area: tuple = (500, 500)):
+    def __init__(self, brain: Brain, color: tuple, position: tuple = (0, 0), area: tuple = (500, 500)):
         self.BORDERRADIUS = 2
-
+        
         self._size: tuple = (30, 30)
         self._startPosition: tuple = position
-        self._name: str = name
         self._brain: Brain = brain
         self._bullets: list = []
         self._action: tuple = ((0, 0), (0, 0))
         self._speed: float = 1
         self._area: tuple = area
-        self._nameSurface = pygame.font.SysFont('calibri', 30).render(name, True, (255, 255, 255))
         self._rect: pygame.Rect = pygame.Rect(position[0], position[1], self._size[0], self._size[1])
-        self._bulletColor = bulletColor
+        self._color: tuple = color
 
     @property
     def position(self) -> tuple:
@@ -61,8 +59,8 @@ class Player:
     def velocity(self) -> tuple:
         return self._action[0]
     @property
-    def name(self) -> str:
-        return self._name
+    def color(self) -> tuple:
+        return self._color
     @property
     def size(self) -> tuple:
         return self._size
@@ -73,9 +71,9 @@ class Player:
     def rect(self) -> pygame.Rect:
         return self._rect
 
-    @name.setter
-    def name(self, name: str):
-        self._name = name
+    @color.setter
+    def color(self, color: tuple):
+        self._color = color
     @size.setter
     def size(self, size: tuple):
         self._size = size
@@ -90,7 +88,7 @@ class Player:
             self._shoot(self._action[1])
 
     def _shoot(self, direction: tuple):
-        self._bullets.append(Bullet(self._rect.center, direction, self._bulletColor))
+        self._bullets.append(Bullet(self._rect.center, direction, self._color))
 
     def updateAction(self, timestep: int, enemyPosition: tuple, enemyVelocity: tuple, enemyBullets: list):
         self._action = self._brain.getAction(timestep, (self._rect.x, self._rect.y), self._action[0], self._bullets, enemyPosition, enemyVelocity, enemyBullets)
@@ -139,14 +137,13 @@ class Player:
             self._rect.move_ip(mtv)
 
     def draw(self, surface):
-        pygame.draw.rect(surface, (0, 0, 0), self._rect, border_radius=self.BORDERRADIUS)
-        surface.blit(self._nameSurface, self._rect)
+        pygame.draw.rect(surface, self._color, self._rect, border_radius=self.BORDERRADIUS)
 
         for bullet in self._bullets:
             bullet.draw(surface)
 
 class Game:
-    def __init__(self, screen, player1: Player, player2: Player, blockSize: tuple = (80, 80)):
+    def __init__(self, screen, bluePlayer: Player, redPlayer: Player, blockSize: tuple = (80, 80)):
         self.BLOCKUPDATEFREQUENCY: int = 200
         self.ACTIONUPDATEFREQUENCY: int = 10
         self.PLAYERSHOOTFREQUENCY: int = 20
@@ -156,9 +153,9 @@ class Game:
         self.BLOCKBORDERRADIUS = 2
 
         self._blockSize = blockSize
-        self._player1: Player = player1
-        self._player2: Player = player2
-        self._players: list = [self._player1, self._player2]
+        self._bluePlayer: Player = bluePlayer
+        self._redPlayer: Player = redPlayer
+        self._players: list = [self._bluePlayer, self._redPlayer]
         self._screen = screen
         self._timestep: int = 0
         self._gameState: int = 0
@@ -202,21 +199,21 @@ class Game:
         return self._gameState
 
     def updateActions(self):
-        self._player1.updateAction(self._timestep, self._player2.position, self._player2.velocity, self._player2.bullets)
-        self._player2.updateAction(self._timestep, self._player1.position, self._player1.velocity, self._player1.bullets)
+        self._bluePlayer.updateAction(self._timestep, self._redPlayer.position, self._redPlayer.velocity, self._redPlayer.bullets)
+        self._redPlayer.updateAction(self._timestep, self._bluePlayer.position, self._bluePlayer.velocity, self._bluePlayer.bullets)
 
     def _checkShots(self):
-        if self._player1.rect.collidelist(self._player2.bullets) != -1:
-            print(f"{self._player1.name} was shot!")
+        if self._bluePlayer.rect.collidelist(self._redPlayer.bullets) != -1:
+            print("Blue player was shot!")
             self._gameState = 2
             self._score = (self._score[0], self._score[1] + 1)
-        if self._player2.rect.collidelist(self._player1.bullets) != -1:
-            print(f"{self._player2.name} was shot!")
+        if self._redPlayer.rect.collidelist(self._bluePlayer.bullets) != -1:
+            print("Red player was shot!")
             self._gameState = 1
             self._score = (self._score[0] + 1, self._score[1])
 
     def _checkCollisions(self):
-        if self._player1.rect.colliderect(self._player2.rect):
+        if self._bluePlayer.rect.colliderect(self._redPlayer.rect):
             print(f"Players collided!")
     
     def _updateBlock(self):

@@ -11,10 +11,10 @@ DISPLAYSURF = pygame.display.set_mode(AREA)
 clock = pygame.time.Clock()
 FRAMERATE = 60
 
-brain1: Brain = dumbBrain()
-player1: Player = Player(brain1, " 1", (255, 0, 0), (0, 0), AREA)
-brain2: Brain = dumbBrain()
-player2: Player = Player(brain2, " 2", (0, 0, 255), (200, 200), AREA)
+brain1: Brain = randomBrain()
+player1: Player = Player(brain1, " 1", (180, 60, 60), (0, 0), AREA)
+brain2: Brain = randomBrain()
+player2: Player = Player(brain2, " 2", (60, 60, 180), (200, 200), AREA)
 
 game = Game(DISPLAYSURF, player1, player2)
 

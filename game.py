@@ -9,6 +9,8 @@ class Brain:
 
 class Bullet:
     def __init__(self, position: tuple, velocity: tuple, color: tuple):
+        self.BORDERRADIUS = 3
+
         self._position: tuple = position
         self._velocity: tuple = velocity
         self._size: tuple = (5, 5)
@@ -34,10 +36,12 @@ class Bullet:
         self._rect = pygame.Rect(self._position[0], self._position[1], self._size[0], self._size[1])
 
     def draw(self, surface):
-        pygame.draw.rect(surface, self._color, self._rect)
+        pygame.draw.rect(surface, self._color, self._rect, border_radius=self.BORDERRADIUS)
 
 class Player:
     def __init__(self, brain: Brain, name: str, bulletColor: tuple, position: tuple = (0, 0), area: tuple = (500, 500)):
+        self.BORDERRADIUS = 2
+
         self._size: tuple = (30, 30)
         self._startPosition: tuple = position
         self._name: str = name
@@ -135,7 +139,7 @@ class Player:
             self._rect.move_ip(mtv)
 
     def draw(self, surface):
-        pygame.draw.rect(surface, (0, 0, 0), self._rect)
+        pygame.draw.rect(surface, (0, 0, 0), self._rect, border_radius=self.BORDERRADIUS)
         surface.blit(self._nameSurface, self._rect)
 
         for bullet in self._bullets:
@@ -147,6 +151,9 @@ class Game:
         self.ACTIONUPDATEFREQUENCY: int = 10
         self.PLAYERSHOOTFREQUENCY: int = 20
         self.BACKGROUNDCOLOR = (200, 200, 200)
+        self.BLOCKCOLOR = (30, 30, 30)
+        self.NEXTBLOCKCOLOR = (180, 180, 180)
+        self.BLOCKBORDERRADIUS = 2
 
         self._blockSize = blockSize
         self._player1: Player = player1
@@ -226,10 +233,10 @@ class Game:
         self._screen.fill(self.BACKGROUNDCOLOR)
 
         # Draw the block
-        pygame.draw.rect(self._screen, (30, 30, 30), self._block)
+        pygame.draw.rect(self._screen, self.BLOCKCOLOR, self._block, border_radius=self.BLOCKBORDERRADIUS)
 
         # Draw the next block
-        pygame.draw.rect(self._screen, (180, 180, 180), self._nextBlock)
+        pygame.draw.rect(self._screen, self.NEXTBLOCKCOLOR, self._nextBlock, border_radius=self.BLOCKBORDERRADIUS)
         timeTillNextBlock = int((self.BLOCKUPDATEFREQUENCY - (self._timestep % self.BLOCKUPDATEFREQUENCY)) / self.BLOCKUPDATEFREQUENCY * 20) + 1
         timer = pygame.font.SysFont('calibri', 30).render(str(timeTillNextBlock), True, (255, 255, 255))
         self._screen.blit(timer, self._nextBlock)

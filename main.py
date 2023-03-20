@@ -44,6 +44,7 @@ if blockMode == "":
 
 generateReplay: bool = True if input("Generate replay (y/n): ") in ["y", "Y", "yes"] else False
 
+replayFile = None
 if generateReplay:
     replayFileName: str = str(int(time.time())) + ".replay"
     replayFile = open(replayFileName, "w")
@@ -61,6 +62,7 @@ while running:
     gamestate = game.step()
     replayData = game.draw()
     if generateReplay:
+        assert replayFile is not None
         replayFile.write("\n"+replayData)
 
     if gamestate != 0:
@@ -74,6 +76,7 @@ while running:
     clock.tick(FRAMERATE)
 
 if generateReplay:
+    assert replayFile is not None
     replayFile.close()
     
 pygame.quit()

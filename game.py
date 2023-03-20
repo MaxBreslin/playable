@@ -109,7 +109,7 @@ class Player:
         return self._size
     @property
     def bullets(self) -> list:
-        return self._bullets
+        return [(bullet.position, bullet.velocity) for bullet in self._bullets]
     @property
     def rect(self) -> pygame.Rect:
         return self._rect
@@ -142,7 +142,7 @@ class Player:
         self._bullets.append(Bullet(self._rect.center, direction, self._color))
 
     def updateAction(self, timestep: int, enemyPosition: tuple, enemyVelocity: tuple, enemyBullets: list, blockPosition: tuple, blockVelocity: tuple):
-        self._action = self._brain.getAction(timestep=timestep, area=self._area, myPosition=(self._rect.x, self._rect.y), myVelocity=self._action[0], myBullets=self._bullets, enemyPosition=enemyPosition, enemyVelocity=enemyVelocity, enemyBullets=enemyBullets, blockPosition=blockPosition, blockVelocity=blockVelocity)
+        self._action = self._brain.getAction(timestep=timestep, area=self._area, myPosition=(self._rect.x, self._rect.y), myVelocity=self._action[0], myBullets=self.bullets, enemyPosition=enemyPosition, enemyVelocity=enemyVelocity, enemyBullets=enemyBullets, blockPosition=blockPosition, blockVelocity=blockVelocity)
         assert(self._action[0][0] in [-1, 0, 1] and self._action[0][1] in [-1, 0, 1] and self._action[1][0] in [-1, 0, 1] and self._action[1][1] in [-1, 0, 1])
 
     def update(self, block: pygame.Rect, checkBlock: bool = True):

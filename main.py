@@ -75,4 +75,5 @@ while running:
 
 if generateReplay:
     replayFile.close()
+    
 pygame.quit()

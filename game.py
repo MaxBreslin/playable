@@ -342,7 +342,7 @@ class Game:
 
         replayData = {
             "timestep": self._timestep,
-            "bluePlayerPosition": self._bluePlayer.replayData,
+            "bluePlayer": self._bluePlayer.replayData,
             "redPlayer": self._redPlayer.replayData,
             "block": {
                 "position": (self._block.x, self._block.y),

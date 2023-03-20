@@ -1,4 +1,4 @@
-import pygame, sys, random
+import pygame, random, json
 
 def randomVelocity() -> tuple:
     choices = [-1, 0, 1]
@@ -67,6 +67,13 @@ class Bullet:
     def rect(self) -> pygame.Rect:
         return self._rect
     
+    @property
+    def replayData(self) -> dict:
+        return {
+            "position": self._position,
+            "velocity": self._velocity
+        }
+    
     def update(self):
         self._position = (self._position[0] + self._speed * self._velocity[0], self._position[1] + self._speed * self._velocity[1])
         self._rect = pygame.Rect(self._position[0], self._position[1], self._size[0], self._size[1])
@@ -81,7 +88,7 @@ class Player:
         self._size: tuple = size
         self._startPosition: tuple = position
         self._brain: Brain = brain
-        self._bullets: list = []
+        self._bullets: list[Bullet] = []
         self._action: tuple = ((0, 0), (0, 0))
         self._speed: int = 1
         self._area: tuple = area
@@ -106,6 +113,14 @@ class Player:
     @property
     def rect(self) -> pygame.Rect:
         return self._rect
+    
+    @property
+    def replayData(self) -> dict:
+        return {
+            "position": (self._rect.x, self._rect.y),
+            "action": self._action,
+            "bullets": [bullet.replayData for bullet in self._bullets]
+        }
 
     @color.setter
     def color(self, color: tuple):
@@ -127,7 +142,7 @@ class Player:
         self._bullets.append(Bullet(self._rect.center, direction, self._color))
 
     def updateAction(self, timestep: int, enemyPosition: tuple, enemyVelocity: tuple, enemyBullets: list, blockPosition: tuple, blockVelocity: tuple):
-        self._action = self._brain.getAction(timestep, self._area, (self._rect.x, self._rect.y), self._action[0], self._bullets, enemyPosition, enemyVelocity, enemyBullets, blockPosition, blockVelocity)
+        self._action = self._brain.getAction(timestep=timestep, area=self._area, myPosition=(self._rect.x, self._rect.y), myVelocity=self._action[0], myBullets=self._bullets, enemyPosition=enemyPosition, enemyVelocity=enemyVelocity, enemyBullets=enemyBullets, blockPosition=blockPosition, blockVelocity=blockVelocity)
         assert(self._action[0][0] in [-1, 0, 1] and self._action[0][1] in [-1, 0, 1] and self._action[1][0] in [-1, 0, 1] and self._action[1][1] in [-1, 0, 1])
 
     def update(self, block: pygame.Rect, checkBlock: bool = True):
@@ -180,7 +195,7 @@ class Game:
         self.BLOCKSIZE = (80, 80)
 
         self._screen = screen
-        self._area = area
+        self._area: tuple = area
         self._bluePlayer: Player = bluePlayer
         self._redPlayer: Player = redPlayer
         self._players: list[Player] = [self._bluePlayer, self._redPlayer]
@@ -191,12 +206,12 @@ class Game:
         self._score: tuple = (0, 0)
         self._block: pygame.Rect = pygame.Rect(0, 0, self.BLOCKSIZE[0], self.BLOCKSIZE[1])
         self._blockVelocity = (0, 0)
-        if blockMode == "path":
+        if blockMode == 'path':
             self._blockVelocity: tuple = (1, 0)
             self._blockSpeed: int = 1
             self._gapSize: int = 100
             self._block = pygame.Rect(self._gapSize, self._gapSize, self.BLOCKSIZE[0], self.BLOCKSIZE[1])
-        elif blockMode == "random":
+        elif blockMode == 'random':
             self._velocityChoices: list = [-1, 0 ,1]
             self._blockVelocity: tuple = randomVelocity()
             self._blockSpeed: int = 1
@@ -247,7 +262,7 @@ class Game:
 
         self._timestep += 1
 
-        return self._gameState
+        return self._gameState 
 
     def updateActions(self):
         self._bluePlayer.updateAction(self._timestep, self._redPlayer.position, self._redPlayer.velocity, self._redPlayer.bullets, (self._block.x, self._block.y), self._blockVelocity)
@@ -312,7 +327,7 @@ class Game:
             block = pygame.Rect(random.randint(0, self._screen.get_width() - self.BLOCKSIZE[0]), random.randint(0, self._screen.get_height() - self.BLOCKSIZE[1]), self.BLOCKSIZE[0], self.BLOCKSIZE[1])
         return block
 
-    def draw(self):
+    def draw(self) -> str:
         self._screen.fill(self.BACKGROUNDCOLOR)
 
         # Draw the block
@@ -324,3 +339,17 @@ class Game:
             player.draw(self._screen)
         
         pygame.display.flip()
+
+        replayData = {
+            "timestep": self._timestep,
+            "bluePlayerPosition": self._bluePlayer.replayData,
+            "redPlayer": self._redPlayer.replayData,
+            "block": {
+                "position": (self._block.x, self._block.y),
+                "velocity": self._blockVelocity
+            }, 
+            "score": self._score,
+            "gameState": self._gameState
+        }
+
+        return json.dumps(replayData)

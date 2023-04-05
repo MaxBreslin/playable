@@ -18,8 +18,9 @@ def getBrainObject(brainName: str) -> Brain:
 
 pygame.init()
 
-AREA = (500, 500)
-PLAYERSIZE = (30, 30)
+AREA = (300, 300)
+PLAYERSIZE = (20, 20)
+BLOCKSIZE = (50, 50)
 FRAMERATE = 60
 
 blueBrainName: str = input("Enter blue brain (e.g. randomBrain, myBrain): ")
@@ -42,28 +43,17 @@ blockMode: str = input("Enter block mode (e.g. random, none): ")
 if blockMode == "":
     blockMode = "random"
 
-generateReplay: bool = True if input("Generate replay (y/n): ") in ["y", "Y", "yes"] else False
-
-replayFile = None
-if generateReplay:
-    replayFileName: str = str(int(time.time())) + ".replay"
-    replayFile = open(replayFileName, "w")
-    replayFile.write(f"{blueBrainName} {redBrainName} {blockMode}")
-
 DISPLAYSURF = pygame.display.set_mode(AREA)
 pygame.display.set_caption("")
 clock = pygame.time.Clock()
 
-game = Game(DISPLAYSURF, AREA, bluePlayer, redPlayer, blockMode)
+game = Game(DISPLAYSURF, AREA, bluePlayer, redPlayer, BLOCKSIZE, blockMode)
 
 running = True
 
 while running:
     gamestate = game.step()
-    replayData = game.draw()
-    if generateReplay:
-        assert replayFile is not None
-        replayFile.write("\n"+replayData)
+    game.draw()
 
     if gamestate != 0:
         print(f"Score: {game.score}")
@@ -74,9 +64,5 @@ while running:
             running = False
 
     clock.tick(FRAMERATE)
-
-if generateReplay:
-    assert replayFile is not None
-    replayFile.close()
     
 pygame.quit()

@@ -5,7 +5,7 @@ class dumbBrain(Brain):
     def __init__(self):
         super().__init__()
     
-    def getAction(self, timestep: int, area:tuple, myPosition: tuple, myVelocity: tuple, myBullets: list, enemyPosition: tuple, enemyVelocity: tuple, enemyBullets: list, blockPosition: tuple, blockVelocity: tuple) -> tuple:
+    def getAction(self, timestep: int, area: tuple, playerSize: tuple, myPosition: tuple, myVelocity: tuple, myBullets: list, enemyPosition: tuple, enemyVelocity: tuple, enemyBullets: list, blockSize: tuple, blockPosition: tuple, blockVelocity: tuple) -> tuple:
         '''
         Given a gamestate, return a tuple of ((x, y), (x, y)) to move the player and shoot a bullet.
         x and y must each be either -1, 0, or 1.
@@ -16,7 +16,7 @@ class randomBrain(Brain):
     def __init__(self):
         super().__init__()
 
-    def getAction(self, timestep: int, area:tuple, myPosition: tuple, myVelocity: tuple, myBullets: list, enemyPosition: tuple, enemyVelocity: tuple, enemyBullets: list, blockPosition: tuple, blockVelocity: tuple) -> tuple:
+    def getAction(self, timestep: int, area: tuple, playerSize: tuple, myPosition: tuple, myVelocity: tuple, myBullets: list, enemyPosition: tuple, enemyVelocity: tuple, enemyBullets: list, blockSize: tuple, blockPosition: tuple, blockVelocity: tuple) -> tuple:
         '''
         Given a gamestate, return a tuple of ((x, y), (x, y)) to move the player and shoot a bullet.
         x and y must each be either -1, 0, or 1.
@@ -34,7 +34,7 @@ class basicAimBrain(Brain):
     def __init__(self):
         super().__init__()
     
-    def getAction(self, timestep: int, area:tuple, myPosition: tuple, myVelocity: tuple, myBullets: list, enemyPosition: tuple, enemyVelocity: tuple, enemyBullets: list, blockPosition: tuple, blockVelocity: tuple) -> tuple:
+    def getAction(self, timestep: int, area: tuple, playerSize: tuple, myPosition: tuple, myVelocity: tuple, myBullets: list, enemyPosition: tuple, enemyVelocity: tuple, enemyBullets: list, blockSize: tuple, blockPosition: tuple, blockVelocity: tuple) -> tuple:
         '''
         Given a gamestate, return a tuple of ((x, y), (x, y)) to move the player and shoot a bullet.
         x and y must each be either -1, 0, or 1.

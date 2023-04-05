@@ -34,7 +34,7 @@ def correctSATCollision(rect: pygame.Rect, block: pygame.Rect):
         rect.move_ip(mtv)
 
 class Brain:
-    def getAction(self, timestep: int, area:tuple, myPosition: tuple, myVelocity: tuple, myBullets: list, enemyPosition: tuple, enemyVelocity: tuple, enemyBullets: list, blockPosition: tuple, blockVelocity: tuple) -> tuple:
+    def getAction(self, timestep: int, area: tuple, playerSize: tuple, myPosition: tuple, myVelocity: tuple, myBullets: list, enemyPosition: tuple, enemyVelocity: tuple, enemyBullets: list, blockSize: tuple, blockPosition: tuple, blockVelocity: tuple) -> tuple:
         '''
         Given a gamestate, return a tuple of ((x, y), (x, y)) to move the player and shoot a bullet.
         '''
@@ -141,8 +141,8 @@ class Player:
     def _shoot(self, direction: tuple):
         self._bullets.append(Bullet(self._rect.center, direction, self._color))
 
-    def updateAction(self, timestep: int, enemyPosition: tuple, enemyVelocity: tuple, enemyBullets: list, blockPosition: tuple, blockVelocity: tuple):
-        self._action = self._brain.getAction(timestep=timestep, area=self._area, myPosition=(self._rect.x, self._rect.y), myVelocity=self._action[0], myBullets=self.bullets, enemyPosition=enemyPosition, enemyVelocity=enemyVelocity, enemyBullets=enemyBullets, blockPosition=blockPosition, blockVelocity=blockVelocity)
+    def updateAction(self, timestep: int, enemyPosition: tuple, enemyVelocity: tuple, enemyBullets: list, blockSize: tuple, blockPosition: tuple, blockVelocity: tuple):
+        self._action = self._brain.getAction(timestep=timestep, area=self._area, playerSize=self._size,myPosition=(self._rect.x, self._rect.y), myVelocity=self._action[0], myBullets=self.bullets, enemyPosition=enemyPosition, enemyVelocity=enemyVelocity, enemyBullets=enemyBullets, blockSize=blockSize, blockPosition=blockPosition, blockVelocity=blockVelocity)
         assert(self._action[0][0] in [-1, 0, 1] and self._action[0][1] in [-1, 0, 1] and self._action[1][0] in [-1, 0, 1] and self._action[1][1] in [-1, 0, 1])
 
     def update(self, block: pygame.Rect, checkBlock: bool = True):
@@ -184,7 +184,7 @@ class Player:
             bullet.draw(surface)
 
 class Game:
-    def __init__(self, screen, area: tuple, bluePlayer: Player, redPlayer: Player, blockMode: str = "random"):
+    def __init__(self, screen, area: tuple, bluePlayer: Player, redPlayer: Player, blockSize: tuple, blockMode: str = "random"):
         self.TELEUPDATEFREQUENCY: int = 200
         self.RANDOMUPDATEFREQUENCY: int = 100
         self.ACTIONUPDATEFREQUENCY: int = 10
@@ -192,8 +192,8 @@ class Game:
         self.BACKGROUNDCOLOR = (200, 200, 200)
         self.BLOCKCOLOR = (30, 30, 30)
         self.BLOCKBORDERRADIUS = 2
-        self.BLOCKSIZE = (80, 80)
 
+        self._blockSize = blockSize
         self._screen = screen
         self._area: tuple = area
         self._bluePlayer: Player = bluePlayer
@@ -204,13 +204,13 @@ class Game:
         self._timestep: int = 0
         self._gameState: int = 0
         self._score: tuple = (0, 0)
-        self._block: pygame.Rect = pygame.Rect(0, 0, self.BLOCKSIZE[0], self.BLOCKSIZE[1])
+        self._block: pygame.Rect = pygame.Rect(0, 0, self._blockSize[0], self._blockSize[1])
         self._blockVelocity = (0, 0)
         if blockMode == 'path':
             self._blockVelocity: tuple = (1, 0)
             self._blockSpeed: int = 1
             self._gapSize: int = 100
-            self._block = pygame.Rect(self._gapSize, self._gapSize, self.BLOCKSIZE[0], self.BLOCKSIZE[1])
+            self._block = pygame.Rect(self._gapSize, self._gapSize, self._blockSize[0], self._blockSize[1])
         elif blockMode == 'random':
             self._velocityChoices: list = [-1, 0 ,1]
             self._blockVelocity: tuple = randomVelocity()
@@ -231,9 +231,9 @@ class Game:
         self._gameState = 0
         
         if self._blockMode == "tele":
-            self._block = pygame.Rect(0, 0, self.BLOCKSIZE[0], self.BLOCKSIZE[1])
+            self._block = pygame.Rect(0, 0, self._blockSize[0], self._blockSize[1])
         elif self._blockMode == "path":
-            self._block = pygame.Rect(self._gapSize, self._gapSize, self.BLOCKSIZE[0], self.BLOCKSIZE[1])
+            self._block = pygame.Rect(self._gapSize, self._gapSize, self._blockSize[0], self._blockSize[1])
             self._blockVelocity = (1, 0)
         elif self._blockMode == "random":
             self._block = self._createBlock()
@@ -265,8 +265,8 @@ class Game:
         return self._gameState 
 
     def updateActions(self):
-        self._bluePlayer.updateAction(self._timestep, self._redPlayer.position, self._redPlayer.velocity, self._redPlayer.bullets, (self._block.x, self._block.y), self._blockVelocity)
-        self._redPlayer.updateAction(self._timestep, self._bluePlayer.position, self._bluePlayer.velocity, self._bluePlayer.bullets, (self._block.x, self._block.y), self._blockVelocity)
+        self._bluePlayer.updateAction(self._timestep, self._redPlayer.position, self._redPlayer.velocity, self._redPlayer.bullets, self._blockSize, (self._block.x, self._block.y), self._blockVelocity)
+        self._redPlayer.updateAction(self._timestep, self._bluePlayer.position, self._bluePlayer.velocity, self._bluePlayer.bullets, self._blockSize, (self._block.x, self._block.y), self._blockVelocity)
 
     def _checkShots(self):
         if self._bluePlayer.rect.collidelist(self._redPlayer.bullets) != -1:
@@ -322,9 +322,9 @@ class Game:
 
         
     def _createBlock(self) -> pygame.Rect:
-        block = pygame.Rect(random.randint(0, self._screen.get_width() - self.BLOCKSIZE[0]), random.randint(0, self._screen.get_height() - self.BLOCKSIZE[1]), self.BLOCKSIZE[0], self.BLOCKSIZE[1])
+        block = pygame.Rect(random.randint(0, self._screen.get_width() - self._blockSize[0]), random.randint(0, self._screen.get_height() - self._blockSize[1]), self._blockSize[0], self._blockSize[1])
         while block.collidelist([player.rect for player in self._players]) != -1:
-            block = pygame.Rect(random.randint(0, self._screen.get_width() - self.BLOCKSIZE[0]), random.randint(0, self._screen.get_height() - self.BLOCKSIZE[1]), self.BLOCKSIZE[0], self.BLOCKSIZE[1])
+            block = pygame.Rect(random.randint(0, self._screen.get_width() - self._blockSize[0]), random.randint(0, self._screen.get_height() - self._blockSize[1]), self._blockSize[0], self._blockSize[1])
         return block
 
     def draw(self) -> str:

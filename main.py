@@ -445,9 +445,9 @@ def getBrainObject(brainName: str) -> Brain:
 
 pygame.init()
 
-AREA = (300, 300)
-PLAYERSIZE = (20, 20)
-BLOCKSIZE = (50, 50)
+AREA = (600, 600)
+PLAYERSIZE = (25, 25)
+BLOCKSIZE = (80, 80)
 FRAMERATE = 60
 
 blueBrainName: str = input("Enter blue brain (e.g. randomBrain, myBrain): ")

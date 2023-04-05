@@ -1,4 +1,4 @@
-from game import Brain
+from main import Brain
 import random
 
 class myBrain(Brain):

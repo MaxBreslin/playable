@@ -1,9 +1,14 @@
 import pygame, sys, time
 from pygame.locals import QUIT
-from benchmarkBrains import *
 from myBrain import myBrain
 import random, math, json
 
+class Brain:
+    def getAction(self, timestep: int, area: tuple, playerSize: tuple, myPosition: tuple, myVelocity: tuple, myBullets: list, enemyPosition: tuple, enemyVelocity: tuple, enemyBullets: list, blockSize: tuple, blockPosition: tuple, blockVelocity: tuple) -> tuple:
+        '''
+        Given a gamestate, return a tuple of ((x, y), (x, y)) to move the player and shoot a bullet.
+        '''
+        raise NotImplemented
 
 class dumbBrain(Brain):
     def __init__(self):
@@ -92,13 +97,6 @@ def correctSATCollision(rect: pygame.Rect, block: pygame.Rect):
                 mtv = pygame.Vector2(0, overlap_y)
 
         rect.move_ip(mtv)
-
-class Brain:
-    def getAction(self, timestep: int, area: tuple, playerSize: tuple, myPosition: tuple, myVelocity: tuple, myBullets: list, enemyPosition: tuple, enemyVelocity: tuple, enemyBullets: list, blockSize: tuple, blockPosition: tuple, blockVelocity: tuple) -> tuple:
-        '''
-        Given a gamestate, return a tuple of ((x, y), (x, y)) to move the player and shoot a bullet.
-        '''
-        raise NotImplemented
 
 class Bullet:
     def __init__(self, position: tuple, velocity: tuple, color: tuple):

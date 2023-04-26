@@ -2,6 +2,14 @@ import pygame, sys, time
 from pygame.locals import QUIT
 import random, math, json
 
+# Start of fix
+LEFT = -1
+STILL = 0
+RIGHT = 1
+UP = -1
+DOWN = 1
+# End of fix
+
 class Brain:
     def getAction(self, timestep: int, area: tuple, playerSize: tuple, myPosition: tuple, myVelocity: tuple, myBullets: list, enemyPosition: tuple, enemyVelocity: tuple, enemyBullets: list, blockSize: tuple, blockPosition: tuple, blockVelocity: tuple) -> tuple:
         '''
@@ -20,10 +28,22 @@ class myBrain(Brain):
         '''
         choices = [-1, 0, 1]
 
+        xDiff = myPosition[0] - enemyPosition[0]
+        yDiff = myPosition[1] - enemyPosition[1]
+        
         moveX: int = random.choice(choices)
         moveY: int = random.choice(choices)
         shootX: int = random.choice(choices)
         shootY: int = random.choice(choices)
+
+        if xDiff > 0:
+            shootX = -1
+        else:
+            shootX = 1
+        if yDiff > 0:
+            shootY = -1
+        else:
+            shootY = 1
 
         return ((moveX, moveY), (shootX, shootY))
 

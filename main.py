@@ -2,13 +2,11 @@ import pygame, sys, time
 from pygame.locals import QUIT
 import random, math, json
 
-# Start of fix
 LEFT = -1
 STILL = 0
 RIGHT = 1
 UP = -1
 DOWN = 1
-# End of fix
 
 class Brain:
     def getAction(self, timestep: int, area: tuple, playerSize: tuple, myPosition: tuple, myVelocity: tuple, myBullets: list, enemyPosition: tuple, enemyVelocity: tuple, enemyBullets: list, blockSize: tuple, blockPosition: tuple, blockVelocity: tuple) -> tuple:
@@ -207,6 +205,9 @@ class Player:
     def bullets(self) -> list:
         return [(bullet.position, bullet.velocity) for bullet in self._bullets]
     @property
+    def rectBullets(self) -> list:
+        return [bullet.rect for bullet in self._bullets]
+    @property
     def rect(self) -> pygame.Rect:
         return self._rect
     
@@ -365,11 +366,11 @@ class Game:
         self._redPlayer.updateAction(self._timestep, self._bluePlayer.position, self._bluePlayer.velocity, self._bluePlayer.bullets, self._blockSize, (self._block.x, self._block.y), self._blockVelocity)
 
     def _checkShots(self):
-        if self._bluePlayer.rect.collidelist(self._redPlayer.bullets) != -1:
+        if self._bluePlayer.rect.collidelist(self._redPlayer.rectBullets) != -1:
             print("Blue player was shot!")
             self._gameState = 2
             self._score = (self._score[0], self._score[1] + 1)
-        if self._redPlayer.rect.collidelist(self._bluePlayer.bullets) != -1:
+        if self._redPlayer.rect.collidelist(self._bluePlayer.rectBullets) != -1:
             print("Red player was shot!")
             self._gameState = 1
             self._score = (self._score[0] + 1, self._score[1])
@@ -463,53 +464,54 @@ def getBrainObject(brainName: str) -> Brain:
     else:
         raise ValueError(f"Could not find class {blueBrainName}")
 
-pygame.init()
-
-AREA = (600, 600)
-PLAYERSIZE = (25, 25)
-BLOCKSIZE = (80, 80)
-FRAMERATE = 60
-
-blueBrainName: str = input("Enter blue brain (e.g. randomBrain, myBrain): ")
-if blueBrainName == "":
-    blueBrainName = "myBrain"
-
-blueBrain = getBrainObject(blueBrainName)
-
-bluePlayer: Player = Player(blueBrain, (60, 60, 180), (AREA[0] - PLAYERSIZE[0], AREA[1] - PLAYERSIZE[1]), PLAYERSIZE, AREA)
-
-redBrainName: str = input("Enter red brain: ")
-if redBrainName == "":
-    redBrainName = "randomBrain"
-
-redBrain = getBrainObject(redBrainName)
-
-redPlayer: Player = Player(redBrain, (180, 60, 60), (0, 0), PLAYERSIZE, AREA)
-
-blockMode: str = input("Enter block mode (e.g. random, none): ")
-if blockMode == "":
-    blockMode = "random"
-
-DISPLAYSURF = pygame.display.set_mode(AREA)
-pygame.display.set_caption("")
-clock = pygame.time.Clock()
-
-game = Game(DISPLAYSURF, AREA, bluePlayer, redPlayer, BLOCKSIZE, blockMode)
-
-running = True
-
-while running:
-    gamestate = game.step()
-    game.draw()
-
-    if gamestate != 0:
-        print(f"Score: {game.score}")
-        game.reset()
-
-    for event in pygame.event.get():
-        if event.type == QUIT:
-            running = False
-
-    clock.tick(FRAMERATE)
+if __name__ == "__main__":
+    pygame.init()
     
-pygame.quit()
+    AREA = (600, 600)
+    PLAYERSIZE = (25, 25)
+    BLOCKSIZE = (80, 80)
+    FRAMERATE = 60
+
+    blueBrainName: str = input("Enter blue brain (e.g. randomBrain, myBrain): ")
+    if blueBrainName == "":
+        blueBrainName = "myBrain"
+
+    blueBrain = getBrainObject(blueBrainName)
+
+    bluePlayer: Player = Player(blueBrain, (60, 60, 180), (AREA[0] - PLAYERSIZE[0], AREA[1] - PLAYERSIZE[1]), PLAYERSIZE, AREA)
+
+    redBrainName: str = input("Enter red brain: ")
+    if redBrainName == "":
+        redBrainName = "randomBrain"
+
+    redBrain = getBrainObject(redBrainName)
+
+    redPlayer: Player = Player(redBrain, (180, 60, 60), (0, 0), PLAYERSIZE, AREA)
+
+    blockMode: str = input("Enter block mode (e.g. random, none): ")
+    if blockMode == "":
+        blockMode = "random"
+
+    DISPLAYSURF = pygame.display.set_mode(AREA)
+    pygame.display.set_caption("")
+    clock = pygame.time.Clock()
+
+    game = Game(DISPLAYSURF, AREA, bluePlayer, redPlayer, BLOCKSIZE, blockMode)
+
+    running = True
+
+    while running:
+        gamestate = game.step()
+        game.draw()
+
+        if gamestate != 0:
+            print(f"Score: {game.score}")
+            game.reset()
+
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                running = False
+
+        clock.tick(FRAMERATE)
+        
+    pygame.quit()

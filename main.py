@@ -99,6 +99,219 @@ class basicAimBrain(Brain):
         moveY: int = random.choice(choices)
         
         return ((moveX, moveY), (shootX, shootY))
+    
+class Avery(Brain):
+    def __init__(self):
+        super().__init__()
+
+    def getAction(self, timestep: int, area: tuple, playerSize: tuple, myPosition: tuple, myVelocity: tuple, myBullets: list, enemyPosition: tuple, enemyVelocity: tuple, enemyBullets: list, blockSize: tuple, blockPosition: tuple, blockVelocity: tuple) -> tuple:
+        
+        
+        if enemyPosition[1] < 300 and myPosition[1] > 300:
+          shootY = -1
+          
+        elif not abs(enemyPosition[1] - myPosition[1]) > 150:
+          shootY = 0
+        else:
+          shootY = -1
+        
+        if enemyPosition[0] < 300 and myPosition[0] > 300:
+          shootX = -1
+          
+        elif not abs(enemyPosition[0] - myPosition[0]) > 150:
+          shootX = -1
+        else:
+          shootX = -1
+
+
+        if myPosition[1] < 75:
+          moveY = 1
+        elif myPosition[1] > 525:
+          moveY = -1
+        elif myVelocity[1] == -1:
+          moveY = -1
+        elif myVelocity[1] == 1:
+          moveY = 1
+        return ((0, moveY), (shootX, shootY))
+
+class Brady(Brain):
+    def __init__(self):
+        super().__init__()
+
+    def getAction(self, timestep: int, area: tuple, playerSize: tuple, myPosition: tuple, myVelocity: tuple, myBullets: list, enemyPosition: tuple, enemyVelocity: tuple, enemyBullets: list, blockSize: tuple, blockPosition: tuple, blockVelocity: tuple) -> tuple:
+        '''
+        Given a gamestate, return a tuple of ((x, y), (x, y)) to move the player and shoot a bullet.
+        x and y must each be either -1, 0, or 1.
+        '''
+        choices = [-1, 0, 1]
+
+
+        xDiff = myPosition[0] - enemyPosition[0]
+        yDiff = myPosition[1] - enemyPosition[1]
+
+
+        moveX: int = -1
+        moveY: int = 0
+        shootX: int = random.choice(choices)
+        shootY: int = random.choice(choices)
+        
+        if myPosition[1] > 300:
+            moveX = -1
+            moveY = 0
+            shootX = 0
+            shootY = 0
+            if myPosition[0] > enemyPosition[0]:
+                shootX = -1
+            else:
+                shootX = 1
+            if myPosition[1] > enemyPosition[1]:
+                shootY = -1 
+            else:
+                shootY = 1
+            if myPosition[0] == 0 or myPosition[0] == 600 - playerSize[0]:
+                shootY = -1
+                shootX = 0
+        
+        else:  
+            moveX = 1
+            moveY = 0
+            shootX = 0
+            shootY = 0
+            if myPosition[0] > enemyPosition[0]:
+                shootX = -1
+            else:
+                shootX = 1
+            if myPosition[1] > enemyPosition[1]:
+                shootY = -1 
+            else:
+                shootY = 1
+            
+            if myPosition[0] == 0 or myPosition[0] == 600 - playerSize[0]:
+                shootY = 1
+                shootX = 0
+
+
+        return ((moveX, moveY), (shootX, shootY))
+    
+class Fox(Brain):
+    def __init__(self):
+        super().__init__()
+
+    def getAction(self, timestep: int, area: tuple, playerSize: tuple, myPosition: tuple, myVelocity: tuple, myBullets: list, enemyPosition: tuple, enemyVelocity: tuple, enemyBullets: list, blockSize: tuple, blockPosition: tuple, blockVelocity: tuple) -> tuple:
+
+        if enemyPosition[0] < myPosition[0] - 10:
+            shootX = -1
+        elif enemyPosition[0] > myPosition[0] + 10:
+            shootX = 1
+        else:
+            shootX = 0
+            
+            
+        if enemyPosition[1] < myPosition[1] - 10:
+            shootY = -1
+        elif enemyPosition[1] > myPosition[1] + 10:
+            shootY = 1
+        else:
+            shootY = 0
+            
+
+
+        return ((0, 0), (shootX, shootY))
+
+class Seamus(Brain):
+    def __init__(self):
+        super().__init__()
+
+    def getAction(self, timestep: int, area: tuple, playerSize: tuple, myPosition: tuple, myVelocity: tuple, myBullets: list, enemyPosition: tuple, enemyVelocity: tuple, enemyBullets: list, blockSize: tuple, blockPosition: tuple, blockVelocity: tuple) -> tuple:
+        moveX: int = 0
+        moveY: int = 0
+        shootX: int = 0
+        shootY: int = 0
+        
+        if myPosition[1] > 300:
+          if timestep % 800 < 200:
+            moveX = -1
+            shootY = -1
+          else:
+            if myPosition[0] > enemyPosition[0] + 225:
+              moveX = -1
+            else:
+              moveX = 1
+        else:
+           if timestep % 800 < 200:
+            moveX = 1
+            shootY = 1
+           else:
+            if myPosition[0] < enemyPosition[0] - 175:
+              moveX = 1
+            else:
+              moveX = -1
+        return ((moveX, moveY), (shootX, shootY))
+
+class patchwork_mirror:
+    def __init__(self):
+        X = 0
+        Y = 0
+    @property
+    def X(self):
+        return self.X
+    @property
+    def Y(self):
+        return self.Y
+    @X.setter
+    def X(self, i):
+        X = i
+    @Y.setter
+    def Y(self, i):
+        Y = i
+
+class Orson(Brain):
+    def __init__(self):
+        super().__init__()
+
+    def getAction(self, timestep: int, area: tuple, playerSize: tuple, myPosition: tuple, myVelocity: tuple, myBullets: list, enemyPosition: tuple, enemyVelocity: tuple, enemyBullets: list, blockSize: tuple, blockPosition: tuple, blockVelocity: tuple) -> tuple:
+        choices = [-1, 0, 1]
+        SX=""
+        SY=""
+        xediff=myPosition[0]-enemyPosition[0]
+        yediff=myPosition[1]-enemyPosition[1]
+        xbdiff=myPosition[0]-blockPosition[0]
+        ybdiff=myPosition[1]-blockPosition[1]
+        this_patchwork = patchwork_mirror()
+        moveX: int = 0
+        moveY: int = 0
+        shootX: int = 0
+        shootY: int = 0
+        if myPosition[0] > enemyPosition[0]:
+            shootX =-1
+        elif myPosition[0] < enemyPosition[0]:
+            shootX = 1
+        if myPosition[1] > enemyPosition[1]:
+            shootY =-1
+        elif myPosition[1] < enemyPosition[1]:
+            shootY = 1
+        if myPosition[0] < enemyPosition[0] + 200 and myPosition[0] > enemyPosition[0]-50:
+            shootX = 0
+        if myPosition[1] < enemyPosition[1] + 200 and myPosition[1] > enemyPosition[1]-50:
+            shootY = 0
+        patchwork_mirror.Y = 0
+        EGG =-enemyVelocity[1]-blockVelocity[1]
+        if EGG == 2:
+            patchwork_mirror.Y = 1
+        elif EGG ==-2:
+            patchwork_mirror.Y =-1
+        else:
+            patchwork_mirror.Y = EGG
+            patchwork_mirror.X = 0
+            EGG =-enemyVelocity[0]-blockVelocity[0]
+        if EGG ==-2:
+            patchwork_mirror.X =-1
+        elif EGG == 2:
+            patchwork_mirror.X = 1
+        else:
+            patchwork_mirror.X = EGG
+        return ((patchwork_mirror.X, patchwork_mirror.Y), (shootX, shootY))
+
         
 
 def randomVelocity() -> tuple:
@@ -505,6 +718,8 @@ if __name__ == "__main__":
         game.draw()
 
         if gamestate != 0:
+            if (game.score[0] >= 6 or game.score[1] >= 6):
+                running = False
             print(f"Score: {game.score}")
             game.reset()
 
